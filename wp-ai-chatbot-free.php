@@ -22,17 +22,14 @@ class WP_AI_ChatBot_Free {
     private $plugin_version = '1.0.1';
     
     
-    /**
-     * 转换 API URL 以适应容器环境
-     * 在容器中，需要将宿主机地址转换为容器可访问的地址
-     */
+    
     private function convert_api_url_for_container($api_url) {
-        // 如果是 localhost 或 IP 地址，转换为 Docker 网关地址
+    
         if (preg_match('#^(https?://)?(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)#', $api_url, $matches)) {
             $parsed = parse_url($api_url);
             $scheme = $parsed['scheme'] ?? 'http';
             $port = $parsed['port'] ?? 80;
-            // 使用 Docker 网关地址
+  
             return $scheme . '://172.18.0.1:' . $port;
         }
         return $api_url;
