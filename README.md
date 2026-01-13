@@ -1,4 +1,4 @@
-# WP AI ChatBot
+# Shop Assist AI
 
 [![WordPress](https://img.shields.io/badge/WordPress-5.8%2B-blue.svg)](https://wordpress.org/plugins/)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -76,10 +76,10 @@ Real-time usage statistics dashboard - track your Q/A pairs, words, and chats.
 
 1. Log in to your WordPress admin
 2. Go to **Plugins → Add New**
-3. Search for "WP AI ChatBot"
+3. Search for "Shop Assist AI"
 4. Click **Install Now**
 5. Activate the plugin
-6. Go to **Settings → AI ChatBot**
+6. Go to **Settings → Shop Assist AI**
 7. Click the link to get your **FREE API Key**
 8. Paste the API Key and URL into the settings page and save
 9. The chat button will appear on your site! 💬
@@ -147,7 +147,7 @@ Absolutely. You can change the chat button position (bottom-right, bottom-left, 
 
 ### Do I need technical skills?
 
-No technical skills required. If you can install a WordPress plugin, you can use WP AI ChatBot.
+No technical skills required. If you can install a WordPress plugin, you can use Shop Assist AI.
 
 ### Is my data secure?
 

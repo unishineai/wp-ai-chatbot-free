@@ -1,5 +1,5 @@
 /**
- * WP AI ChatBot - Chat UI Module
+ * Shop Assist AI - Chat UI Module
  * Handles UI interactions: tab switching, button clicks, window control
  */
 (function(window) {

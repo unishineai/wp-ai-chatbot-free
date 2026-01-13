@@ -1,5 +1,5 @@
 /**
- * WP AI ChatBot - Chat History Module
+ * Shop Assist AI - Chat History Module
  * Handles chat history management: save, load, clear, export
  */
 (function(window) {
@@ -95,7 +95,7 @@
         }
         
         // Generate text content
-        let content = '=== WP AI ChatBot - Chat History Export ===\n';
+        let content = '=== Shop Assist AI - Chat History Export ===\n';
         content += 'Exported: ' + new Date().toLocaleString('en-US') + '\n';
         content += 'Total conversations: ' + history.length + '\n';
         content += '==========================================\n\n';

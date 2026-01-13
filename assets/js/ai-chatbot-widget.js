@@ -1,5 +1,5 @@
 /**
- * WP AI ChatBot - Unified Widget Entry Point
+ * Shop Assist AI - Unified Widget Entry Point
  * Loads all chat modules and exposes unified interface
  */
 (function() {

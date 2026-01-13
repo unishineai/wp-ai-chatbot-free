@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WP AI ChatBot
+Plugin Name: Shop Assist AI
 Plugin URI: https://chatbot.unishineai.dpdns.org/
 Description: Add an intelligent AI chatbot to your WordPress site in 1 minute. Engage visitors, answer questions 24/7. Get your free API key from our SaaS platform.
 Version: 1.0.0
@@ -8,7 +8,7 @@ Author: UniShine AI
 Author URI: https://chatbot.unishineai.dpdns.org/
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: wp-ai-chatbot
+Text Domain: shop-assist-ai
 Domain Path: /languages
 Requires at least: 5.8
 Requires PHP: 7.4
@@ -16,7 +16,7 @@ Requires PHP: 7.4
 
 if (!defined('ABSPATH')) exit;
 
-class WP_AI_ChatBot_Free {
+class Shop_Assist_AI_Free {
     private $api_base_url;
     private $api_key;
     private $plugin_version = '1.0.1';
@@ -39,32 +39,32 @@ class WP_AI_ChatBot_Free {
             add_action('admin_menu', [$this, 'add_admin_menu']);
             add_action('wp_footer', [$this, 'add_chat_widget']);
             add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-            add_shortcode('wp_ai_chatbot', [$this, 'shortcode']);
-            register_activation_hook(__FILE__, [$this, 'activate']);
-            register_deactivation_hook(__FILE__, [$this, 'deactivate']);
-            
-            // AJAX handlers
-            add_action('wp_ajax_wp_ai_chatbot_check_api', [$this, 'check_api_connection']);
-            add_action('wp_ajax_nopriv_wp_ai_chatbot_check_api', [$this, 'check_api_connection']);
-            add_action('wp_ajax_wp_ai_chatbot_get_usage', [$this, 'get_usage_stats']);
-            add_action('wp_ajax_nopriv_wp_ai_chatbot_get_usage', [$this, 'get_usage_stats']);
+            add_shortcode('shop_assist_ai', [$this, 'shortcode']);
+                    register_activation_hook(__FILE__, [$this, 'activate']);
+                    register_deactivation_hook(__FILE__, [$this, 'deactivate']);
+                    
+                    // AJAX handlers
+                    add_action('wp_ajax_shop_assist_ai_check_api', [$this, 'check_api_connection']);
+                    add_action('wp_ajax_nopriv_shop_assist_ai_check_api', [$this, 'check_api_connection']);
+                    add_action('wp_ajax_shop_assist_ai_get_usage', [$this, 'get_usage_stats']);
+                    add_action('wp_ajax_nopriv_shop_assist_ai_get_usage', [$this, 'get_usage_stats']);
             
             // Initialize configuration
-            $this->init_config();
+            $this->init();
     }
     
-    private function init_config() {
-        $this->api_base_url = get_option('wp_ai_chatbot_api_url', '');
-        $this->api_key = get_option('wp_ai_chatbot_api_key', '');
+public function init() {
+        $this->api_base_url = get_option('shop_assist_ai_api_url', '');
+        $this->api_key = get_option('shop_assist_ai_api_key', '');
     }
     
     public function activate() {
         // Add default options on activation
-        add_option('wp_ai_chatbot_api_url', '');
-        add_option('wp_ai_chatbot_api_key', '');
-        add_option('wp_ai_chatbot_title', 'AI Assistant');
-        add_option('wp_ai_chatbot_position', 'bottom-right');
-        add_option('wp_ai_chatbot_theme', 'blue');
+        add_option('shop_assist_ai_api_url', '');
+        add_option('shop_assist_ai_api_key', '');
+        add_option('shop_assist_ai_title', 'AI Assistant');
+        add_option('shop_assist_ai_position', 'bottom-right');
+        add_option('shop_assist_ai_theme', 'blue');
     }
     
     public function deactivate() {
@@ -73,8 +73,8 @@ class WP_AI_ChatBot_Free {
     
     public function add_admin_menu() {
         add_menu_page(
-            'WP AI ChatBot',
-            'AI ChatBot',
+            'Shop Assist AI',
+            'Shop Assist AI',
             'manage_options',
             'wp-ai-chatbot-free',
             [$this, 'admin_page'],
@@ -92,24 +92,24 @@ class WP_AI_ChatBot_Free {
         // 2. Handle form submission and verify Nonce
         if (isset($_POST['save'])) {
             // Verify Nonce to prevent CSRF attacks
-            if (!wp_verify_nonce($_POST['_wpnonce'], 'wp_ai_chatbot_settings')) {
+            if (!wp_verify_nonce($_POST['_wpnonce'], 'shop_assist_ai_settings')) {
                 wp_die('Security check failed. Please try again.');
             }
-            update_option('wp_ai_chatbot_api_url', sanitize_text_field($_POST['api_url']));
-            update_option('wp_ai_chatbot_api_key', sanitize_text_field($_POST['api_key']));
-            update_option('wp_ai_chatbot_title', sanitize_text_field($_POST['title']));
-            update_option('wp_ai_chatbot_position', sanitize_text_field($_POST['position']));
-            update_option('wp_ai_chatbot_theme', sanitize_text_field($_POST['theme']));
+            update_option('shop_assist_ai_api_url', sanitize_text_field($_POST['api_url']));
+            update_option('shop_assist_ai_api_key', sanitize_text_field($_POST['api_key']));
+            update_option('shop_assist_ai_title', sanitize_text_field($_POST['title']));
+            update_option('shop_assist_ai_position', sanitize_text_field($_POST['position']));
+            update_option('shop_assist_ai_theme', sanitize_text_field($_POST['theme']));
             echo '<div class="notice notice-success"><p><strong>✅ Settings saved successfully!</strong></p></div>';
         }
         // === Security Patch End ===
         
-        // Get current configuration
-        $api_url = get_option('wp_ai_chatbot_api_url', '');
-        $api_key = get_option('wp_ai_chatbot_api_key', '');
-        $title = get_option('wp_ai_chatbot_title', 'AI Assistant');
-        $position = get_option('wp_ai_chatbot_position', 'bottom-right');
-        $theme = get_option('wp_ai_chatbot_theme', 'blue');
+        // Get current settings
+        $api_url = get_option('shop_assist_ai_api_url', '');
+        $api_key = get_option('shop_assist_ai_api_key', '');
+        $title = get_option('shop_assist_ai_title', 'AI Assistant');
+        $position = get_option('shop_assist_ai_position', 'bottom-right');
+        $theme = get_option('shop_assist_ai_theme', 'blue');
         
         // SaaS platform URL (extracted from API URL)
         $saas_url = '';
@@ -126,11 +126,11 @@ class WP_AI_ChatBot_Free {
                 <div style="position: absolute; bottom: -40px; left: -40px; width: 120px; height: 120px; background: rgba(255, 255, 255, 0.1); border-radius: 50%;"></div>
                 
                 <div style="position: relative; z-index: 1; flex-shrink: 0;">
-                    <img src="<?php echo plugins_url('assets/images/logo.svg', __FILE__); ?>" alt="WP AI ChatBot" style="height: 64px; width: auto; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));" />
+                    <img src="<?php echo plugins_url('assets/images/logo.svg', __FILE__); ?>" alt="Shop Assist AI" style="height: 64px; width: auto; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));" />
                 </div>
                 
                 <div style="position: relative; z-index: 1; flex: 1;">
-                    <h1 style="margin: 0 0 8px 0; font-size: 32px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">WP AI ChatBot - Free</h1>
+                    <h1 style="margin: 0 0 8px 0; font-size: 32px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">Shop Assist AI - Free</h1>
                     <p style="margin: 0; font-size: 16px; color: white; opacity: 0.95; font-weight: 400;">Settings Dashboard</p>
                 </div>
                 
@@ -169,7 +169,7 @@ class WP_AI_ChatBot_Free {
             </div>
             
             <form method="post">
-                <?php wp_nonce_field('wp_ai_chatbot_settings'); ?>
+                <?php wp_nonce_field('shop_assist_ai_settings'); ?>
                 
                 <div style="margin: 35px 0 25px 0; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); border-left: 4px solid #ff7a00;">
                 <h2 style="margin: 0 0 20px 0; font-size: 22px; color: #333; display: flex; align-items: center; gap: 10px;">
@@ -298,7 +298,7 @@ class WP_AI_ChatBot_Free {
                         url: ajaxurl,
                         type: 'POST',
                         data: {
-                            action: 'wp_ai_chatbot_get_usage',
+                            action: 'shop_assist_ai_get_usage',
                             api_url: apiUrl,
                             api_key: apiKey
                         },
@@ -373,7 +373,7 @@ class WP_AI_ChatBot_Free {
                         url: ajaxurl,
                         type: 'POST',
                         data: {
-                            action: 'wp_ai_chatbot_check_api',
+                            action: 'shop_assist_ai_check_api',
                             api_url: apiUrl,
                             api_key: apiKey
                         },
@@ -542,9 +542,9 @@ class WP_AI_ChatBot_Free {
     
     public function enqueue_scripts() {
         // Debug: Log configuration
-        error_log('[WP AI ChatBot] enqueue_scripts called');
-        error_log('[WP AI ChatBot] api_base_url: ' . $this->api_base_url);
-        error_log('[WP AI ChatBot] api_key: ' . $this->api_key);
+        error_log('[Shop Assist AI] enqueue_scripts called');
+        error_log('[Shop Assist AI] api_base_url: ' . $this->api_base_url);
+        error_log('[Shop Assist AI] api_key: ' . $this->api_key);
 
         // Load styles
         wp_enqueue_style(
@@ -571,13 +571,13 @@ class WP_AI_ChatBot_Free {
             'renderMode' => 'direct',
             'apiUrl' => $this->convert_api_url_for_container($this->api_base_url),
             'apiKey' => $this->api_key,
-            'title' => get_option('wp_ai_chatbot_title', 'AI Assistant'),
-            'position' => get_option('wp_ai_chatbot_position', 'bottom-right'),
-            'theme' => get_option('wp_ai_chatbot_theme', 'blue'),
+            'title' => get_option('shop_assist_ai_title', 'AI Assistant'),
+            'position' => get_option('shop_assist_ai_position', 'bottom-right'),
+            'theme' => get_option('shop_assist_ai_theme', 'blue'),
             'ajaxUrl' => admin_url('admin-ajax.php')
         );
 
-        error_log('[WP AI ChatBot] Config: ' . json_encode($config));
+        error_log('[Shop Assist AI] Config: ' . json_encode($config));
 
         wp_localize_script('ai-chatbot-widget', 'wpAiChatbotFree', $config);
     }
@@ -587,9 +587,9 @@ class WP_AI_ChatBot_Free {
             return;
         }
         
-        $position = get_option('wp_ai_chatbot_position', 'bottom-right');
-        $title = get_option('wp_ai_chatbot_title', 'AI Support Assistant');
-        $theme = get_option('wp_ai_chatbot_theme', 'blue');
+        $position = get_option('shop_assist_ai_position', 'bottom-right');
+        $title = get_option('shop_assist_ai_title', 'AI Support Assistant');
+        $theme = get_option('shop_assist_ai_theme', 'blue');
         
         // Theme color mapping
         $colors = [
@@ -830,4 +830,4 @@ class WP_AI_ChatBot_Free {
 }
 
 // Initialize plugin
-new WP_AI_ChatBot_Free();
+new Shop_Assist_AI_Free();

@@ -1,4 +1,4 @@
-=== WP AI ChatBot ===
+=== Shop Assist AI ===
 Contributors: unishineai
 Donate link: https://chatbot.unishineai.dpdns.org/
 Tags: ai, chatbot, live chat, customer service, support, widget
@@ -12,7 +12,7 @@ Add a smart AI chatbot to your WordPress in 1 minute. No coding. Get your free A
 
 == Description ==
 = The Easiest AI ChatBot for WordPress =
-Tired of missing customer inquiries? Install this plugin and connect it to your free UniShine AI account. Your AI assistant will work 24/7 to engage visitors and answer questions based on your knowledge.
+Tired of missing customer inquiries? Install Shop Assist AI and connect it to your free UniShine AI account. Your AI assistant will work 24/7 to engage visitors and answer questions based on your knowledge.
 
 = Why Choose This Plugin? =
 *   **1-Minute Setup**: Just install, get a free API key, paste it, and you're done.
@@ -28,9 +28,9 @@ Tired of missing customer inquiries? Install this plugin and connect it to your 
 *   Anyone who wants instant customer support
 
 == Installation ==
-1. Upload the `wp-ai-chatbot` folder to the `/wp-content/plugins/` directory, or install directly from the WordPress plugin directory.
+1. Upload the `shop-assist-ai` folder to the `/wp-content/plugins/` directory, or install directly from the WordPress plugin directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **AI ChatBot** in your admin menu, click the link to get your **FREE API Key**.
+3. Go to **Shop Assist AI** in your admin menu, click the link to get your **FREE API Key**.
 4. Paste the API Key and URL into the settings page and save.
 5. The chat button will appear on your site! 💬
 

@@ -1,5 +1,5 @@
 /**
- * WP AI ChatBot - Chat Core Module
+ * Shop Assist AI - Chat Core Module
  * Handles message sending, displaying, loading indicators, and typing effects
  */
 (function(window) {

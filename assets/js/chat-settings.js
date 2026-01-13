@@ -1,5 +1,5 @@
 /**
- * WP AI ChatBot - Chat Settings Module
+ * Shop Assist AI - Chat Settings Module
  * Handles user preferences: theme, position, sound, history settings
  */
 (function(window) {
