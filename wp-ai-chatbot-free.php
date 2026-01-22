@@ -5,11 +5,10 @@ Plugin URI: https://chatbot.unishineai.dpdns.org/
 Description: Add an intelligent AI chatbot to your WordPress site in 1 minute. Engage visitors, answer questions 24/7. Get your free API key from our SaaS platform.
 Version: 1.0.0
 Author: UniShine AI
-Author URI: https://chatbot.unishineai.dpdns.org/
+Author URI: https://unishineai.dpdns.org/
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: shop-assist-ai
-Domain Path: /languages
 Requires at least: 5.8
 Requires PHP: 7.4
 */
@@ -25,9 +24,9 @@ class Shop_Assist_AI_Free {
     
     private function convert_api_url_for_container($api_url) {
         if (preg_match('#^(https?://)?(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)#', $api_url, $matches)) {
-            $parsed = parse_url($api_url);
+            $parsed = wp_parse_url($api_url);
             $scheme = $parsed['scheme'] ?? 'http';
-            $port = $parsed['port'] ?? 80;   
+            $port = $parsed['port'] ?? 80;
 
             return $scheme . '://172.18.0.1:' . $port;
         }
@@ -92,14 +91,14 @@ public function init() {
         // 2. Handle form submission and verify Nonce
         if (isset($_POST['save'])) {
             // Verify Nonce to prevent CSRF attacks
-            if (!wp_verify_nonce($_POST['_wpnonce'], 'shop_assist_ai_settings')) {
+            if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'shop_assist_ai_settings')) {
                 wp_die('Security check failed. Please try again.');
             }
-            update_option('shop_assist_ai_api_url', sanitize_text_field($_POST['api_url']));
-            update_option('shop_assist_ai_api_key', sanitize_text_field($_POST['api_key']));
-            update_option('shop_assist_ai_title', sanitize_text_field($_POST['title']));
-            update_option('shop_assist_ai_position', sanitize_text_field($_POST['position']));
-            update_option('shop_assist_ai_theme', sanitize_text_field($_POST['theme']));
+            update_option('shop_assist_ai_api_url', sanitize_text_field(wp_unslash($_POST['api_url'] ?? '')));
+            update_option('shop_assist_ai_api_key', sanitize_text_field(wp_unslash($_POST['api_key'] ?? '')));
+            update_option('shop_assist_ai_title', sanitize_text_field(wp_unslash($_POST['title'] ?? '')));
+            update_option('shop_assist_ai_position', sanitize_text_field(wp_unslash($_POST['position'] ?? '')));
+            update_option('shop_assist_ai_theme', sanitize_text_field(wp_unslash($_POST['theme'] ?? '')));
             echo '<div class="notice notice-success"><p><strong>✅ Settings saved successfully!</strong></p></div>';
         }
         // === Security Patch End ===
@@ -114,7 +113,7 @@ public function init() {
         // SaaS platform URL (extracted from API URL)
         $saas_url = '';
         if ($api_url) {
-            $parsed = parse_url($api_url);
+            $parsed = wp_parse_url($api_url);
             $saas_url = $parsed['scheme'] . '://' . $parsed['host'];
         }
         
@@ -126,7 +125,7 @@ public function init() {
                 <div style="position: absolute; bottom: -40px; left: -40px; width: 120px; height: 120px; background: rgba(255, 255, 255, 0.1); border-radius: 50%;"></div>
                 
                 <div style="position: relative; z-index: 1; flex-shrink: 0;">
-                    <img src="<?php echo plugins_url('assets/images/logo.svg', __FILE__); ?>" alt="Shop Assist AI" style="height: 64px; width: auto; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));" />
+                    <img src="<?php echo esc_url(plugins_url('assets/images/logo.svg', __FILE__)); ?>" alt="Shop Assist AI" style="height: 64px; width: auto; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));" />
                 </div>
                 
                 <div style="position: relative; z-index: 1; flex: 1;">
@@ -471,9 +470,11 @@ public function init() {
     }
     
     public function check_api_connection() {
-        $api_url = sanitize_text_field($_POST['api_url']);
-        $api_key = sanitize_text_field($_POST['api_key']);
+        check_ajax_referer('shop_assist_ai_settings', 'nonce');
         
+        $api_url = sanitize_text_field(wp_unslash($_POST['api_url'] ?? ''));
+        $api_key = sanitize_text_field(wp_unslash($_POST['api_key'] ?? ''));
+
         if (!$api_url || !$api_key) {
             wp_send_json_error(array('message' => 'API URL and API Key cannot be empty'));
             return;
@@ -506,9 +507,11 @@ public function init() {
     }
     
     public function get_usage_stats() {
-        $api_url = sanitize_text_field($_POST['api_url']);
-        $api_key = sanitize_text_field($_POST['api_key']);
+        check_ajax_referer('shop_assist_ai_settings', 'nonce');
         
+        $api_url = sanitize_text_field(wp_unslash($_POST['api_url'] ?? ''));
+        $api_key = sanitize_text_field(wp_unslash($_POST['api_key'] ?? ''));
+
         if (!$api_url || !$api_key) {
             wp_send_json_error(array('message' => 'API URL and API Key cannot be empty'));
             return;
@@ -541,11 +544,6 @@ public function init() {
     }
     
     public function enqueue_scripts() {
-        // Debug: Log configuration
-        error_log('[Shop Assist AI] enqueue_scripts called');
-        error_log('[Shop Assist AI] api_base_url: ' . $this->api_base_url);
-        error_log('[Shop Assist AI] api_key: ' . $this->api_key);
-
         // Load styles
         wp_enqueue_style(
             'wp-ai-chatbot',
@@ -576,8 +574,6 @@ public function init() {
             'theme' => get_option('shop_assist_ai_theme', 'blue'),
             'ajaxUrl' => admin_url('admin-ajax.php')
         );
-
-        error_log('[Shop Assist AI] Config: ' . json_encode($config));
 
         wp_localize_script('ai-chatbot-widget', 'wpAiChatbotFree', $config);
     }
@@ -613,7 +609,7 @@ public function init() {
                 width: 60px;
                 height: 60px;
                 border-radius: 50%;
-                background: <?php echo $primary_color; ?>;
+                background: <?php echo esc_attr($primary_color); ?>;
                 color: white;
                 border: none;
                 cursor: pointer;
@@ -690,7 +686,7 @@ public function init() {
                 color: #333;
             }
             .wp-ai-chatbot-message.user .wp-ai-chatbot-message-content {
-                background: <?php echo $primary_color; ?>;
+                background: <?php echo esc_attr($primary_color); ?>;
                 color: white;
             }
             .wp-ai-chatbot-input-area {
@@ -708,11 +704,11 @@ public function init() {
                 outline: none;
             }
             .wp-ai-chatbot-input:focus {
-                border-color: <?php echo $primary_color; ?>;
+                border-color: <?php echo esc_attr($primary_color); ?>;
             }
             .wp-ai-chatbot-send {
                 padding: 10px 20px;
-                background: <?php echo $primary_color; ?>;
+                background: <?php echo esc_attr($primary_color); ?>;
                 color: white;
                 border: none;
                 border-radius: 8px;
@@ -757,7 +753,7 @@ public function init() {
                             <div class="wp-ai-chatbot-message bot">
                                 <div class="wp-ai-chatbot-message-content">
                                     Hello! I'm your AI assistant. How can I help you today?
-                                    <div class="wp-ai-message-time"><?php echo date("m/d/Y, g:i A"); ?></div>
+                                    <div class="wp-ai-message-time"><?php echo esc_html(gmdate("m/d/Y, g:i A")); ?></div>
                                 </div>
                             </div>
                         </div>
